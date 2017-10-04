@@ -1,14 +1,20 @@
+# coding=utf-8
 import socket
 import httplib
 import urllib
 import os
+from BuildHTML import getHTML
 
 # Returns The MimeType Of the Given Request File. Mime Type indicates whether file is image or text etc. This is used by the browser
 def getMimeType(requesting_file):
-    if requesting_file.endswith('jpg'):
-        return 'image/jpg'
+    filename,file_extension = os.path.splitext(requesting_file)
+    filename.lstrip('/')
+    if (requesting_file.endswith('png')):
+        print(filename+"."+file_extension[1:])
+        return filename+"."+file_extension[1:]
     else:
         return 'text/html'
+
 
 # Returns The Content Of The Given File
 def getContent(requesting_file):
@@ -23,10 +29,13 @@ def getContent(requesting_file):
 # Main Function In Python
 if __name__ == '__main__':
 
-    file1 = open('Main.html','rb')
-    html = file1.read()
+    #file1 = open('Main.html','rb')
+    #html = file1.read()
 
-    os.chdir('/Users/shreyas/Desktop/FileServer/Files')
+    html = getHTML()
+
+    cwd = os.getcwd()
+    os.chdir(cwd + '/Files')
 
     server_sock = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
     host = '127.0.0.1'
