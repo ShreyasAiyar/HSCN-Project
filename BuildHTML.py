@@ -3,12 +3,10 @@ import os
 
 def getHTML():
     cwd = os.getcwd()
-
-    list1 = os.listdir(cwd + '/Files')
-    print(list1)
+    list1 = os.listdir(cwd)
     str2 = ""
     for i in list1:
-        str2 += '<p><a>' +i + '</a></p>'
+        str2 += '<p><a href=127.0.0.1:8080/' + i + '</a></p>'
 
     str1 = """
     <!DOCTYPE html>
@@ -27,5 +25,3 @@ def getHTML():
         </body>
     </html>"""
     return str1
-
-print(getHTML())
