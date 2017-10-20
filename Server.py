@@ -45,7 +45,7 @@ def getHTML():
         </head>
         <body>
             <h1>File Server Application</h1>
-            """  + str(str2) + """ 
+            """  + str(str2) + """
         </body>
     </html>"""
     return str1
