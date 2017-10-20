@@ -17,7 +17,7 @@ def getMimeType(requesting_file):
 
 # Returns The Content Of The Given File
 def getContent(requesting_file):
-    requesting_file = requesting_file.lstrip('/')
+    requesting_file = requesting_file.lstrip('127.0.0.1:8080/')
     if requesting_file == '':
         return html
     else:
@@ -30,7 +30,7 @@ def getHTML():
     list1 = os.listdir(cwd)
     str2 = ""
     for i in list1:
-        str2 += '<p><a>' +i + '</a></p>'
+        str2 += '<p><a href="127.0.0.1/8080/' + i + '"' + '>'+ i + '</a></p>'
 
     str1 = """
     <!DOCTYPE html>
@@ -70,12 +70,13 @@ if __name__ == '__main__':
 
 
     while True:
-        html = getHTML()
         client_sock, client_addr = server_sock.accept()
         pid = os.fork()
         if(pid == 0):
+            html = getHTML()
             print("Got Connection From ", client_addr)
             browser_info = client_sock.recv(1024).decode('utf-8')
+            print browser_info
             string_list = browser_info.split(' ')
             requesting_file = string_list[1]
             print("Client Requesting File " + requesting_file) 

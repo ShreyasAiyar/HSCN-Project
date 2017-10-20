@@ -5,7 +5,6 @@
 ### Work Left 
 
 - [x] Fix images
-- [ ] Apply cool CSS
-- [ ] Find a way to build html for each link dynamically instead of hardcoding links
-- [ ] Check if works across two systems via Ad-Hoc
-- [ ] Gmail Integration
+- [x] Apply cool CSS
+- [x] Find a way to build html for each link dynamically instead of hardcoding links
+- [x] Check if works across two systems via Ad-Hoc
