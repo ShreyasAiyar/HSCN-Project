@@ -15,7 +15,7 @@ def getMimeType(requesting_file):
         return 'text/html'
 
 
-# Returns The Content Of The Given File
+# Returns The Content Of The Given File. For Example a Text File would return text. 
 def getContent(requesting_file):
     requesting_file = requesting_file.lstrip('127.0.0.1:8080/')
     if requesting_file == '':
@@ -24,7 +24,7 @@ def getContent(requesting_file):
         file1 = open(requesting_file,'r')
         return file1.read()
 
-# This Will Get The HTML Dynamically
+# This Will Build The HTML Dynamically
 def getHTML():
     cwd = os.getcwd()
     list1 = os.listdir(cwd)
@@ -61,8 +61,8 @@ if __name__ == '__main__':
     os.chdir(cwd + '/Files')
 
     server_sock = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-    host = '127.0.0.1'
-    port = 8080
+    host = '127.0.0.1' # Loopback Address
+    port = 8080 # Loopback Port
     server_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     server_sock.bind((host,port))
     server_sock.listen(5)
