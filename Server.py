@@ -4,6 +4,8 @@ import httplib
 import urllib
 import os
 
+
+
 # Returns The MimeType Of the Given Request File. Mime Type indicates whether file is image or text etc. This is used by the browser
 def getMimeType(requesting_file):
     filename,file_extension = os.path.splitext(requesting_file)
@@ -30,7 +32,7 @@ def getHTML():
     list1 = os.listdir(cwd)
     str2 = ""
     for i in list1:
-        str2 += '<p><a href="127.0.0.1/8080/' + i + '"' + '>'+ i + '</a></p>'
+        str2 += '<p><a href="172.20.10.2/8080/' + i + '"' + '>'+ i + '</a></p>'
 
     str1 = """
     <!DOCTYPE html>
@@ -54,14 +56,14 @@ def getHTML():
 # Main Function In Python
 if __name__ == '__main__':
 
-    #file1 = open('Main.html','rb')
+    # file1 = open('Main.html','rb')
     #html = file1.read()
 
     cwd = os.getcwd()
     os.chdir(cwd + '/Files')
 
     server_sock = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-    host = '127.0.0.1' # Loopback Address
+    host = '172.20.10.2' # Loopback Address
     port = 8080 # Loopback Port
     server_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     server_sock.bind((host,port))
