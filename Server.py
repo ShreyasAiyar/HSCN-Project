@@ -3,7 +3,7 @@ import socket
 import httplib
 import urllib
 import os
-
+import sys
 
 
 # Returns The MimeType Of the Given Request File. Mime Type indicates whether file is image or text etc. This is used by the browser
@@ -11,8 +11,11 @@ def getMimeType(requesting_file):
     filename,file_extension = os.path.splitext(requesting_file)
     filename.lstrip('/')
     if (requesting_file.endswith('png')):
-        print(filename+"."+file_extension[1:])
-        return filename+"."+file_extension[1:]
+        return 'image/png'
+    elif(requesting_file.endswith('jpg')):
+        return 'image/jpg'
+    elif(requesting_file.endswith('mp4')):
+        return 'video/mp4'
     else:
         return 'text/html'
 
@@ -32,7 +35,7 @@ def getHTML():
     list1 = os.listdir(cwd)
     str2 = ""
     for i in list1:
-        str2 += '<p><a href="172.20.10.2/8080/' + i + '"' + '>'+ i + '</a></p>'
+        str2 += '<p><a href="/' + i + '"' + '>'+ i + '</a></p>'
 
     str1 = """
     <!DOCTYPE html>
@@ -85,7 +88,12 @@ if __name__ == '__main__':
             mimeType = getMimeType(requesting_file)
             content = getContent(requesting_file)
             header = "HTTP/1.1 200 OK\n"
-            client_sock.send(header.encode('utf-8') + 'Content-Type:' + mimeType + '\n\n' + content)
+            size_of_content = sys.getsizeof(content)
+            print("Size Of Content Is", size_of_content)
+            if sys.getsizeof(content)>1024:
+                client_sock.sendall(header.encode('utf-8') + 'Content-Type:' + mimeType + '\n\n' + content)
+            else:
+                client_sock.sendall(header.encode('utf-8') + 'Content-Type:' + mimeType + '\n\n' + content)
             client_sock.close()
         else:
             print
