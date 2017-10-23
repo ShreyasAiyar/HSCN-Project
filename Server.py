@@ -6,10 +6,10 @@ import os
 import sys
 
 
-# Returns The MimeType Of the Given Request File. Mime Type indicates whether file is image or text etc. This is used by the browser
+# Returns The MimeType Of the Given Request File. Mime Type indicates whether file is image or text etc. This is used by the browser to detect the content type
 def getMimeType(requesting_file):
-    filename,file_extension = os.path.splitext(requesting_file)
-    filename.lstrip('/')
+    #filename,file_extension = os.path.splitext(requesting_file)
+    #filename.lstrip('/') # We Remove the Slash in order to extract the file name
     if (requesting_file.endswith('png')):
         return 'image/png'
     elif(requesting_file.endswith('jpg')):
@@ -22,6 +22,7 @@ def getMimeType(requesting_file):
 
 # Returns The Content Of The Given File. For Example a Text File would return text. 
 def getContent(requesting_file):
+    #requesting_file = requesting_file.lstrip('127.0.0.1:8080/')
     requesting_file = requesting_file.lstrip('127.0.0.1:8080/')
     if requesting_file == '':
         return html
@@ -66,11 +67,11 @@ if __name__ == '__main__':
     os.chdir(cwd + '/Files')
 
     server_sock = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-    host = '172.20.10.2' # Loopback Address
-    port = 8080 # Loopback Port
-    server_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    host = '127.0.0.1'  
+    port = 8080 
+    server_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1) 
     server_sock.bind((host,port))
-    server_sock.listen(5)
+    server_sock.listen(5) # Upto 5 simultaneous connections can be queued
     print("Listening For Connection .../")
 
 
@@ -87,13 +88,13 @@ if __name__ == '__main__':
             print("Client Requesting File " + requesting_file) 
             mimeType = getMimeType(requesting_file)
             content = getContent(requesting_file)
-            header = "HTTP/1.1 200 OK\n"
+            header = "HTTP/1.1 200 OK\n" 
             size_of_content = sys.getsizeof(content)
             print("Size Of Content Is", size_of_content)
             if sys.getsizeof(content)>1024:
-                client_sock.sendall(header.encode('utf-8') + 'Content-Type:' + mimeType + '\n\n' + content)
+                client_sock.sendall(header.encode('utf-8') + 'Content-Type:' + mimeType + '\n\n' + content) #Sendall is a socket send function which continously sends the 
             else:
-                client_sock.sendall(header.encode('utf-8') + 'Content-Type:' + mimeType + '\n\n' + content)
+                client_sock.send(header.encode('utf-8') + 'Content-Type:' + mimeType + '\n\n' + content)
             client_sock.close()
         else:
             print
