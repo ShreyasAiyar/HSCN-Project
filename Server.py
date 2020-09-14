@@ -5,11 +5,14 @@ import urllib
 import os
 import sys
 
+HOST = '127.0.0.1'
+PORT = 8080
 
-# Returns The MimeType Of the Given Request File. Mime Type indicates whether file is image or text etc. This is used by the browser to detect the content type
+
 def getMimeType(requesting_file):
+    " Returns The MimeType Of the Given Request File. Mime Type indicates whether file is image or text etc. This is used by the browser to detect the content type "
     #filename,file_extension = os.path.splitext(requesting_file)
-    #filename.lstrip('/') # We Remove the Slash in order to extract the file name
+    # filename.lstrip('/') # We Remove the Slash in order to extract the file name
     if (requesting_file.endswith('png')):
         return 'image/png'
     elif(requesting_file.endswith('jpg')):
@@ -20,25 +23,24 @@ def getMimeType(requesting_file):
         return 'text/html'
 
 
-# Returns The Content Of The Given File. For Example a Text File would return text. 
 def getContent(requesting_file):
-    #requesting_file = requesting_file.lstrip('127.0.0.1:8080/')
+    "Returns The Content Of The Given File. A text File would return text"
     requesting_file = requesting_file.lstrip('127.0.0.1:8080/')
     if requesting_file == '':
         return html
     else:
-        file1 = open(requesting_file,'r')
+        file1 = open(requesting_file, 'r')
         return file1.read()
 
-# This Will Build The HTML Dynamically
-def getHTML():
-    cwd = os.getcwd()
-    list1 = os.listdir(cwd)
-    str2 = ""
-    for i in list1:
-        str2 += '<p><a href="/' + i + '"' + '>'+ i + '</a></p>'
 
-    str1 = """
+def getHTML():
+    file_list = os.listdir(os.getcwd())
+    file_list_html = ""
+
+    for i in file_list:
+        file_list_html += '<p><a href="/' + i + '"' + '>' + i + '</a></p>'
+
+    return """
     <!DOCTYPE html>
     <html>
         <head>
@@ -51,50 +53,43 @@ def getHTML():
         </head>
         <body>
             <h1>File Server Application</h1>
-            """  + str(str2) + """
+            """ + str(file_list_html) + """
         </body>
     </html>"""
-    return str1
 
 
-# Main Function In Python
-if __name__ == '__main__':
+def run_server():
+    os.chdir(os.getcwd() + 'files')
 
-    # file1 = open('Main.html','rb')
-    #html = file1.read()
-
-    cwd = os.getcwd()
-    os.chdir(cwd + '/Files')
-
-    server_sock = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-    host = '127.0.0.1'  
-    port = 8080 
-    server_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1) 
-    server_sock.bind((host,port))
-    server_sock.listen(5) # Upto 5 simultaneous connections can be queued
-    print("Listening For Connection .../")
-
+    server_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    server_sock.bind((HOST, PORT))
+    server_sock.listen(5)
+    print("Listening for connections on port {1}".format(PORT))
 
     while True:
         client_sock, client_addr = server_sock.accept()
         pid = os.fork()
-        if(pid == 0):
+        if pid == 0:
             html = getHTML()
-            print("Got Connection From ", client_addr)
             browser_info = client_sock.recv(1024).decode('utf-8')
-            print browser_info
             string_list = browser_info.split(' ')
             requesting_file = string_list[1]
-            print("Client Requesting File " + requesting_file) 
             mimeType = getMimeType(requesting_file)
             content = getContent(requesting_file)
-            header = "HTTP/1.1 200 OK\n" 
+            header = "HTTP/1.1 200 OK\n"
             size_of_content = sys.getsizeof(content)
-            print("Size Of Content Is", size_of_content)
-            if sys.getsizeof(content)>1024:
-                client_sock.sendall(header.encode('utf-8') + 'Content-Type:' + mimeType + '\n\n' + content) #Sendall is a socket send function which continously sends the 
+            if sys.getsizeof(content) > 1024:
+                # Sendall is a socket send function which continously sends
+                client_sock.sendall(header.encode(
+                    'utf-8') + 'Content-Type:' + mimeType + '\n\n' + content)
             else:
-                client_sock.send(header.encode('utf-8') + 'Content-Type:' + mimeType + '\n\n' + content)
+                client_sock.send(header.encode('utf-8') +
+                                 'Content-Type:' + mimeType + '\n\n' + content)
             client_sock.close()
         else:
             print
+
+
+if __name__ == '__main__':
+    run_server()
